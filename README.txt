@@ -24,12 +24,12 @@ Please find descriptions of all files included below:
                      
 - data             : this folder contains 5 files, 
 
-                    - `settings.RData` and `table.csv` are used in the simulation study 
-                       and store information regarding the simulation settings and 
-                       data generating parameters, respectively
+                    - `settings.RData` and `table.csv` are used in the 
+                       simulation study and store information regarding the 
+                       simulation settings and data generating parameters, respectively
 
-                    - `sim_1.rds`, `sim_2.rds` and `sim_3.rds` contain the empirical results
-                       from the simulation study in scenarios 1-3, respectively
+                    - `sim_1.rds`, `sim_2.rds` and `sim_3.rds` contain the 
+                       empirical results from the simulation study in scenarios 1-3, respectively
 
 
 - images           : this folder contains 3 images, `plot_1.png`, `plot_2.png` and `plot_3.png` 
