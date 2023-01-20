@@ -1,0 +1,140 @@
+---
+title: "sim"
+author: "Alex Carriero"
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: false
+    theme: paper
+---
+
+# Set up 
+```{r, warning = F, message = F, echo = F}
+# libraries 
+
+# general
+library(tidyverse)
+library(devtools)
+library(MASS)
+library(viridis)
+
+# models 
+library(glmnet)
+library(e1071)
+library(randomForest)
+library(xgboost)
+library(ebmc)
+
+# simulation features 
+library(pROC)
+library(SimDesign)
+library(simsalapar)
+```
+
+```{r, echo = F}
+# install IRIC package from github
+source("IRIC-master/R/Ensemble-based level/EasyEnsemble.R")
+```
+
+```{r}
+# simulation scenarios 
+set <- readRDS("data/settings.RData")
+```
+ 
+```{r}
+# functions
+source("functions.R")
+```
+
+```{r}
+# simulation function 
+
+simulation <- function(sc, iter){
+  
+  start    <- Sys.time()
+  scenario <- set[[sc]]
+
+  iter  <- iter
+  auc   <- matrix(data = 0, nrow = iter, ncol = 6)
+  bri   <- matrix(data = 0, nrow = iter, ncol = 6)
+  int   <- matrix(data = 0, nrow = iter, ncol = 6)
+  slp   <- matrix(data = 0, nrow = iter, ncol = 6)
+
+  plot <- ggplot() + 
+          geom_abline(slope = 1, intercept = 0, size = 1) +
+          scale_color_brewer(palette = "Set2") +
+          xlab("Estimated Probability") +
+          ylab("Observed Proportion") +
+          # ggtitle(paste("Event Fraction:", scenario[[2]])) + 
+          theme_minimal() 
+
+  for (i in 1:iter){    
+      df       <- generate_data(scenario)
+      test     <- generate_data(scenario, test = TRUE)
+    
+      pp       <- pred_probs(df, test)
+    
+      auc[i,]  <- quiet(get_auc(pp))
+      bri[i,]  <- get_brier_score(pp)
+      int[i,]  <- get_int(pp)
+      slp[i,]  <- get_slp(pp)
+      
+      ppl      <- ready2plot(pp)
+    
+      plot     <- plot + 
+                  geom_line(data = ppl, 
+                            aes(x = value, y = as.numeric(class) -1), 
+                            stat = "smooth",
+                            method = stats::loess, 
+                            formula = y ~ x,
+                            se = F, 
+                            size = 0.1, 
+                            alpha = 0.3,
+                            color = "#0d0887") +
+                  xlim(0,1)+
+                  facet_wrap(~Method)+
+                  theme(legend.position = "none")
+                  # scale_color_viridis(discrete = TRUE, option = "D", direction = -1)
+  }
+  
+  if(sc == 4){
+    sc <- 1
+  }
+  if(sc == 5){
+    sc <-2
+  }
+  if(sc ==6){
+    sc <-3
+  }
+  ggsave(paste0("images/plot_",sc,".png"), plot, width=10, height = 4)  # save plot
+  stats <- get_stats(auc, bri, int, slp)                         # save statistics
+  
+  end <- Sys.time()
+  dif <- difftime(end, start, units = "mins")
+  
+  out   <- list("runtime" = dif, "stats" = stats) 
+  return(out)
+}
+```
+
+# Results 
+```{r, warning = F}
+set.seed(2345)
+
+### 8 Predictors, EV = 0.5,  N = N
+sim_1 <- quiet(simulation(sc = 4, iter = 10))    # run simulation 
+saveRDS(sim_1, file = "data/sim_1.rds")          # save results
+
+
+### 8 Predictors, EV = 0.2,  N = N
+sim_2 <- quiet(simulation(sc = 2, iter = 200))    # run simulation 
+saveRDS(sim_2, file = "data/sim_2.rds")           # save results
+
+
+### 8 Predictors, EV = 0.02, N = N
+sim_3 <- quiet(simulation(sc = 3, iter = 200))    # run simulation 
+saveRDS(sim_3, file = "data/sim_3.rds")           # save results
+```
+
