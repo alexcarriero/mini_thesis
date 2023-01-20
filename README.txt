@@ -1,6 +1,7 @@
 Alex Carriero's Research Repository: 
 
-This repository contains everything required to re-create my mini-thesis, submitted on January 10th, 2023.  Please descriptions of all files included below: 
+This repository contains everything required to re-create my mini-thesis, submitted on January 10th, 2023.  
+Please find descriptions of all files included below: 
 
 
 - manuscript.pdf   : Mini-thesis manuscript. 
