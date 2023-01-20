@@ -34,7 +34,8 @@ Please find descriptions of all files included below:
                        simulation study in scenarios 1-3, respectively
 
 
-- images           : this folder contains 3 images, `plot_1.png`, `plot_2.png` and `plot_3.png` 
-                     are the calibration plots from simuluation scenarios 1-3, respectively
+- images           : this folder contains 3 images, `plot_1.png`, `plot_2.png` 
+                     and `plot_3.png` are the calibration plots from 
+                     simuluation scenarios 1-3, respectively
 
 
